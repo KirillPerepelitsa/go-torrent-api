@@ -78,21 +78,40 @@ func decode(r *bufio.Reader) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		length, err := strconv.Atoi(string(char))
+
+		num, _, err := strLen(r)
 		if err != nil {
 			return nil, err
 		}
-		// discarding 2 bytes, length + :, for e.g 3:foo to foo
-		_, err = r.Discard(2)
 		if err != nil {
 			return nil, err
 		}
-		buf := make([]byte, length)
+		buf := make([]byte, num)
 		_, err = r.Read(buf)
 		if err != nil {
 			return nil, err
 		}
-
 		return string(buf), nil
+	}
+}
+
+func strLen(r *bufio.Reader) (num int, l int, err error) {
+	var buf []byte
+	for {
+		char, err := r.ReadByte()
+		if err != nil {
+			return 0, 0, err
+		}
+		switch char {
+		case ':':
+			l = len(string(buf))
+			num, err = strconv.Atoi(string(buf))
+			if err != nil {
+				return 0, 0, err
+			}
+			return num, l, nil
+		default:
+			buf = append(buf, char)
+		}
 	}
 }

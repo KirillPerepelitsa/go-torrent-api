@@ -29,3 +29,22 @@ func TestUnmarshalDictionary(t *testing.T) {
 	res, _ := Unmarshal(r)
 	assert.Equal(t, map[string]interface{}{"astring": "str", "bint": 120, "clist": []interface{}{"list"}}, res)
 }
+
+func TestMarshalDictWithDashFields(t *testing.T) {
+	r := strings.NewReader("d11:string-dashi120ee")
+	res, e := Unmarshal(r)
+	assert.NoError(t, e)
+	assert.Equal(t, map[string]interface{}{"string-dash": 120}, res)
+}
+
+func TestMarshalLongString(t *testing.T) {
+	r := strings.NewReader("146:foobarfoobarfoobarfoobarfoobarfoobar-foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar-foobarfoobarfoobarfoobarfoobarfoobar")
+	res, e := Unmarshal(r)
+	assert.NoError(t, e)
+	assert.Equal(t, "foobarfoobarfoobarfoobarfoobarfoobar-foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar-foobarfoobarfoobarfoobarfoobarfoobar", res)
+
+	//reader := bufio.NewReader(r)
+	//buf := make([]byte, 195)
+	//reader.Read(buf)
+	//println(string(buf))
+}
