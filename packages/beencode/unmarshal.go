@@ -18,12 +18,6 @@ func Unmarshal(reader io.Reader) (interface{}, error) {
 
 func decode(r *bufio.Reader) (interface{}, error) {
 	char, err := r.ReadByte()
-	//s := r.Size()
-	//buf := make([]byte, s)
-	//_, err = r.Read(buf)
-	//println(err)
-	//println(string(buf))
-	//return nil, errors.New("FOO")
 	if err != nil {
 		return nil, err
 	}
@@ -146,25 +140,4 @@ func readUntil(r *bufio.Reader, delim byte) (data []byte, err error) {
 		err = errors.New("bad r.ReadSlice() length")
 	}
 	return
-}
-
-func strLen(r *bufio.Reader) (num int, l int, err error) {
-	var buf []byte
-	for {
-		char, err := r.ReadByte()
-		if err != nil {
-			return 0, 0, err
-		}
-		switch char {
-		case ':':
-			l = len(string(buf))
-			num, err = strconv.Atoi(string(buf))
-			if err != nil {
-				return 0, 0, err
-			}
-			return num, l, nil
-		default:
-			buf = append(buf, char)
-		}
-	}
 }
